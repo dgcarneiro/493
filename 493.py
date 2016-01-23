@@ -82,11 +82,12 @@ def gpsd():
             if (not fixed):
                 fixed = True
 
-
+				lat = gpsd.fix.latitude
+				lon = gpsd.fix.longitude
 				print ' GPS reading'
 				print '----------------------------------------'
-				print 'latitude    ' , gpsd.fix.latitude
-				print 'longitude   ' , gpsd.fix.longitude
+				print 'latitude    ' , lat
+				print 'longitude   ' , lon
 				print 'reported time and fix time    ' , gpsd.utc,' + ', gpsd.fix.time
 				print 'altitude (m)' , gpsd.fix.altitude
 				print 'speed error (m/s)         ' , gpsd.fix.eps
@@ -118,7 +119,9 @@ def gps():
 			NMEA1=GPS1.readline()
 			NMEA2=GPS1.readline()			
 			NMEA3=GPS1.readline()			
-			print NMEA
+			print NMEA1
+			print NMEA2
+			print NMEA3
 
 def get_img(self):
 		#update current image.
@@ -165,7 +168,7 @@ def spin_right():
 	GPIO.output(left_wheel_dir, GPIO.HIGH)
 
 def speed():
-	vel = int(cmd[1])*10
+
 	PWM.set_duty_cycle(left_wheel, vel)
 	PWM.set_duty_cycle(right_wheel, vel)
 	
@@ -173,19 +176,12 @@ def speed():
 #scheduler runs the readings from the ir sensors and photosensors to that which will also
 #view if conditions are met will set its flag to 1
 def scheduler():
-	#follow_readings()
-	avoid_readings()
+
 
 #reads flags values and when the flag is = to 1 it will run the def below it, its the decision
 #maker of what action will be done and what has priority
 def arbiter():
-	if (avoid_output_flag ==1):
-		avoid_action()
-	elif (follow_output_flag ==1):
-		follow_action()
-	else:
-		cruise()
-	time.sleep(0.001)	
+	
 
 def readfile_coordinates():
 	f = open('temp.txt', 'r')
@@ -193,27 +189,9 @@ def readfile_coordinates():
 	f.close()
 	coordinates = temp[line]
 	
-	f = open('temp.txt', 'r')
-	
-	
 
 while True:
-	cmd = raw_input("Command, f/b/l/r 0 .. 9, for example f5  :")
-	direction = cmd[0]  # direction is the first value of two in the string
-	if direction == "f":
-		forward()
-		speed()
-	elif direction == "b":
-		backward()
-		speed()
-	elif direction == "l":
-		spin_left()
-		speed()
-	elif direction == "r":
-		spin_right()
-		speed()
-	else:
-		break
+
 
 PWM.stop(left_wheel)
 PWM.stop(right_wheel)
