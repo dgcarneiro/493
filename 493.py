@@ -22,6 +22,10 @@ import cv2
 import numpy as np
 import serial
 
+#values 
+coordinates = 0
+object_detected_flag = 0
+
 
 # Defined GPIO pins for sonar
 GPIO_TRIGGER = "P8_37"
@@ -67,6 +71,8 @@ def measure():
 
   elapsed = stop-start
   distance = (elapsed * 34300)/2 
+  if distance < 20:
+  	global object_detected_flag = 1
 
 #Begins camera connection
 self.cap = cv2.VideoCapture(1)
@@ -169,33 +175,84 @@ def spin_right():
 
 def speed():
 
-	PWM.set_duty_cycle(left_wheel, vel)
-	PWM.set_duty_cycle(right_wheel, vel)
+	PWM.set_duty_cycle(left_wheel, 50)
+	PWM.set_duty_cycle(right_wheel, 50)
+	
+def check_coord():
 	
 	
-#scheduler runs the readings from the ir sensors and photosensors to that which will also
-#view if conditions are met will set its flag to 1
+	
 def scheduler():
+	while True:
+		gpsd()
+		get_img()
+		measure()
+		readfile_coordinates()
+		
+def cruise():
+	forward()
+	speed()
+		
+
 
 
 #reads flags values and when the flag is = to 1 it will run the def below it, its the decision
 #maker of what action will be done and what has priority
 def arbiter():
+	while True:
+		if (object_detected_flag ==1):   #if detects bject within 20cm
+			avoid_action()
+		elif (follow_output_flag ==1):
+			follow_action()
+		else:
+			cruise()
+		time.sleep(0.001)
+		
+def avoid_():
+	while True:
+		if ir_left >.2:
+			avoid_output_flag = 1
+			right_turn()
+			speed()
+			time.sleep(.1)
+		elif ir_right >.2:
+			avoid_output_flag = 1
+			right_turn()
+			speed()
+			time.sleep(.1)
+		elif ir_front >.2:
+			if ir_left >.2
+				avoid_output_flag = 1
+				right_turn()
+				speed()
+				time.sleep(.1)
+			elif ir_right >.2:
+				avoid_output_flag = 1
+				right_turn()
+				speed()
+				time.sleep(.1)
+		else:
+			avoid_output_flag = 0
 	
 
 def readfile_coordinates():
 	f = open('temp.txt', 'r')
 	temp = f.readlines()
 	f.close()
-	coordinates = temp[line]
+	global coordinates = temp[line]
 	
 
 while True:
+	try:
+		while True:
+			scheduler()
+			arbiter()
+			
+	except KeyboardInterrupt: # pressing ctrl C stops operation and cleans up
 
-
-PWM.stop(left_wheel)
-PWM.stop(right_wheel)
-
-PWM.cleanup()
-GPIO.cleanup()
+		PWM.stop(left_wheel)	
+		PWM.stop(right_wheel)
+		PWM.cleanup()
+		GPIO.cleanup()
+		ADC.cleanup()
 
