@@ -58,7 +58,38 @@ GPIO.setup(left_wheel_dir, GPIO.OUT)
 PWM.start(left_wheel, 0)
 PWM.start(right_wheel, 0)
 
- 
+def forward():
+	GPIO.output(right_wheel_dir, GPIO.HIGH)
+	GPIO.output(left_wheel_dir, GPIO.HIGH)
+
+def backward():
+	GPIO.output(right_wheel_dir, GPIO.LOW)
+	GPIO.output(left_wheel_dir, GPIO.LOW)
+	
+	
+def turn_left():
+	GPIO.output(right_wheel_dir, GPIO.HIGH)
+	GPIO.output(left_wheel_dir, GPIO.HIGH)
+
+def turn_right():
+	GPIO.output(right_wheel_dir, GPIO.HIGH)
+	GPIO.output(left_wheel_dir, GPIO.HIGH)	
+
+
+def spin_left():
+	GPIO.output(right_wheel_dir, GPIO.HIGH)
+	GPIO.output(left_wheel_dir, GPIO.LOW)
+
+def spin_right():
+	GPIO.output(right_wheel_dir, GPIO.LOW)
+	GPIO.output(left_wheel_dir, GPIO.HIGH)
+
+def speed():
+
+	PWM.set_duty_cycle(left_wheel, 50)
+	PWM.set_duty_cycle(right_wheel, 50)
+
+ #def for sonar
 def measure():
   # This function measures a distance
   GPIO.output(GPIO_TRIGGER, GPIO.HIGH)
@@ -76,6 +107,7 @@ def measure():
   distance = (elapsed * 34300)/2 
   if distance < 20:
   	global object_detected_flag = 1
+
 
 def gpsd():
     gpsd = gps(mode=WATCH_ENABLE) ##  set gpsd to start gps info
@@ -111,7 +143,7 @@ def gpsd():
                 fixed = False
 				print' waiting for fix '
 				sleep(1)
-
+#alternate gps def
 def gps():
 	UART.setup("UART1")
 	UART.setup("UART2")
@@ -129,26 +161,7 @@ def gps():
 			print NMEA2
 			print NMEA3
 
-def forward():
-	GPIO.output(right_wheel_dir, GPIO.HIGH)
-	GPIO.output(left_wheel_dir, GPIO.HIGH)
 
-def backward():
-	GPIO.output(right_wheel_dir, GPIO.LOW)
-	GPIO.output(left_wheel_dir, GPIO.LOW)
-
-def spin_left():
-	GPIO.output(right_wheel_dir, GPIO.HIGH)
-	GPIO.output(left_wheel_dir, GPIO.LOW)
-
-def spin_right():
-	GPIO.output(right_wheel_dir, GPIO.LOW)
-	GPIO.output(left_wheel_dir, GPIO.HIGH)
-
-def speed():
-
-	PWM.set_duty_cycle(left_wheel, 50)
-	PWM.set_duty_cycle(right_wheel, 50)
 	
 def check_coord():
 	#this is just generic values, need to tune
