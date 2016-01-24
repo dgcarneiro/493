@@ -22,6 +22,9 @@ import cv2
 import numpy as np
 import serial
 
+#Begins camera connection
+self.cap = cv2.VideoCapture(1)
+
 #values 
 coordinates = 0
 object_detected_flag = 0
@@ -73,9 +76,6 @@ def measure():
   distance = (elapsed * 34300)/2 
   if distance < 20:
   	global object_detected_flag = 1
-
-#Begins camera connection
-self.cap = cv2.VideoCapture(1)
 
 def gpsd():
     gpsd = gps(mode=WATCH_ENABLE) ##  set gpsd to start gps info
@@ -179,7 +179,8 @@ def speed():
 	PWM.set_duty_cycle(right_wheel, 50)
 	
 def check_coord():
-	
+	#this is just generic values, need to tune
+	if latitude > lat-0.5 and lat+0.5
 	
 	
 def scheduler():
@@ -187,7 +188,7 @@ def scheduler():
 		gpsd()
 		get_img()
 		measure()
-		readfile_coordinates()
+		
 		
 def cruise():
 	forward()
@@ -203,48 +204,27 @@ def arbiter():
 		if (object_detected_flag ==1):   #if detects bject within 20cm
 			avoid_action()
 		elif (follow_output_flag ==1):
-			follow_action()
+			
 		else:
 			cruise()
 		time.sleep(0.001)
 		
 def avoid_():
-	while True:
-		if ir_left >.2:
-			avoid_output_flag = 1
-			right_turn()
-			speed()
-			time.sleep(.1)
-		elif ir_right >.2:
-			avoid_output_flag = 1
-			right_turn()
-			speed()
-			time.sleep(.1)
-		elif ir_front >.2:
-			if ir_left >.2
-				avoid_output_flag = 1
-				right_turn()
-				speed()
-				time.sleep(.1)
-			elif ir_right >.2:
-				avoid_output_flag = 1
-				right_turn()
-				speed()
-				time.sleep(.1)
-		else:
-			avoid_output_flag = 0
+
 	
 
 def readfile_coordinates():
 	f = open('temp.txt', 'r')
 	temp = f.readlines()
 	f.close()
-	global coordinates = temp[line]
-	
+	latitude = temp.split("")[0]
+	longitude = temp.split("")[1]
+
 
 while True:
 	try:
 		while True:
+			readfile_coordinates()
 			scheduler()
 			arbiter()
 			
