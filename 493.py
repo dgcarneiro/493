@@ -28,6 +28,7 @@ self.cap = cv2.VideoCapture(1)
 #values 
 coordinates = 0
 object_detected_flag = 0
+line = 0
 
 
 # Defined GPIO pins for sonar
@@ -120,29 +121,29 @@ def gpsd():
             if (not fixed):
                 fixed = True
 
-				lat = gpsd.fix.latitude
-				lon = gpsd.fix.longitude
-				print ' GPS reading'
-				print '----------------------------------------'
-				print 'latitude    ' , lat
-				print 'longitude   ' , lon
-				print 'reported time and fix time    ' , gpsd.utc,' + ', gpsd.fix.time
-				print 'altitude (m)' , gpsd.fix.altitude
-				print 'speed error (m/s)         ' , gpsd.fix.eps
-				print 'longitude error (m)        ' , gpsd.fix.epx
-				print 'estimated vertical error         ' , gpsd.fix.epv
-				print 'estimated timestamp error        ' , gpsd.fix.ept
-				print 'speed (m/s) ' , gpsd.fix.speed
-				print 'climb (m/s)       ' , gpsd.fix.climb
-				print 'mode        ' , gpsd.fix.mode
-				print
-				print 'satellites        ' , gpsd.satellites
-				time.sleep(1)
+			lat = gpsd.fix.latitude
+			lon = gpsd.fix.longitude
+			print ' GPS reading'
+			print '----------------------------------------'
+			print 'latitude    ' , lat
+			print 'longitude   ' , lon
+			print 'reported time and fix time    ' , gpsd.utc,' + ', gpsd.fix.time
+			print 'altitude (m)' , gpsd.fix.altitude
+			print 'speed error (m/s)         ' , gpsd.fix.eps
+			print 'longitude error (m)        ' , gpsd.fix.epx
+			print 'estimated vertical error         ' , gpsd.fix.epv
+			print 'estimated timestamp error        ' , gpsd.fix.ept
+			print 'speed (m/s) ' , gpsd.fix.speed
+			print 'climb (m/s)       ' , gpsd.fix.climb
+			print 'mode        ' , gpsd.fix.mode
+			print
+			print 'satellites        ' , gpsd.satellites
+			time.sleep(1)
         else:
             if (fixed):
                 fixed = False
-				print' waiting for fix '
-				sleep(1)
+			print' waiting for fix '
+			sleep(1)
 #alternate gps def
 def gps():
 	UART.setup("UART1")
@@ -152,20 +153,28 @@ def gps():
 	GPS2 = serial.Serial('/dev/ttyO2', 9600)
 	GPS3 = serial.Serial('/dev/ttyO3', 9600)
 	while(1):
-			while GPS1.inWaiting() or GPS2.inWaiting() or GPS3.inWaiting() ==0:
-					pass
-			NMEA1=GPS1.readline()
-			NMEA2=GPS1.readline()			
-			NMEA3=GPS1.readline()			
-			print NMEA1
-			print NMEA2
-			print NMEA3
+		while GPS1.inWaiting() or GPS2.inWaiting() or GPS3.inWaiting() ==0:
+			pass
+		NMEA1=GPS1.readline()
+		NMEA2=GPS1.readline()			
+		NMEA3=GPS1.readline()			
+		print NMEA1
+		print NMEA2
+		print NMEA3
 
 
 	
 def check_coord():
 	#this is just generic values, need to tune
-	if latitude > lat-0.5 and lat+0.5
+	if latitude > lat-0.5 and latitude < lat+0.5 and longitude > lon-0.5 and longitude < lon+0.5
+		line = line+1
+		pass
+	elif latitude > lat-0.5 or latitude < lat+0.5
+	
+	
+	elif longitude > lon-0.5 0r longitude < lon+0.5
+	
+	
 	
 	
 def scheduler():
@@ -199,8 +208,9 @@ def avoid_():
 	
 
 def readfile_coordinates():
+	global line
 	f = open('temp.txt', 'r')
-	temp = f.readlines()
+	temp = f.readlines(line)
 	f.close()
 	latitude = temp.split("")[0]
 	longitude = temp.split("")[1]
@@ -209,7 +219,7 @@ def readfile_coordinates():
 while True:
 	try:
 		while True:
-			readfile_coordinates()
+			readfile_coordinates(line)
 			scheduler()
 			arbiter()
 			
