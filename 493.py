@@ -28,6 +28,7 @@ self.cap = cv2.VideoCapture(1)
 #values 
 coordinates = 0
 object_detected_flag = 0
+edge_output_flag = 0
 line = 0
 
 
@@ -86,7 +87,6 @@ def spin_right():
 	GPIO.output(left_wheel_dir, GPIO.HIGH)
 
 def speed():
-
 	PWM.set_duty_cycle(left_wheel, 50)
 	PWM.set_duty_cycle(right_wheel, 50)
 
@@ -180,7 +180,7 @@ def check_coord():
 def scheduler():
 	while True:
 		gpsd()
-		get_img()
+		#get_img()
 		measure()
 		
 		
@@ -197,7 +197,9 @@ def arbiter():
 	while True:
 		if (object_detected_flag ==1):   #if detects bject within 20cm
 			avoid_action()
-		elif (follow_output_flag ==1):
+			turn_left()
+			global object_detected_flag = 0
+		elif (edge_output_flag ==1):
 			
 		else:
 			cruise()
